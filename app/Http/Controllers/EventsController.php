@@ -10,6 +10,8 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Date;
 
+use Carbon\Carbon;
+
 class EventsController extends BaseController
 {
     /*
@@ -180,6 +182,14 @@ class EventsController extends BaseController
 
     public function getFutureEventsWithWorkshops() {
         
-        //throw new \Exception('implement in coding task 2');
+        $startDate= Carbon::now()->format('Y-m-d H:i:s');
+
+        // get past events (workshop already started for epscific event) from workshop
+        $pastEventIds=Workshop::where('start','<',$startDate)->groupBy('event_id')->pluck('event_id');
+        
+        // get all events with workshops except started events
+        $eventData= Event::with('workshops')->whereNotIn('id',$pastEventIds)->get();
+        return response()->json($eventData);
+
     }
 }
