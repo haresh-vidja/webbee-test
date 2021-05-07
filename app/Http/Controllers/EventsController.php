@@ -192,4 +192,9 @@ class EventsController extends BaseController
         return response()->json($eventData);
 
     }
+
+    public function getWarmUpEvents(){
+        $eventData= Event::select('name')->get();
+        return response()->json($eventData);
+    }
 }
